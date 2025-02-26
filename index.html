@@ -11,33 +11,21 @@
   <body>
     <div id="app"></div>
 
-    <script>
-      window.sessionStorage.removeItem("reservationWidgetState");
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            (function (document, script, scriptId) {
+              const firstScript = document.getElementsByTagName(script)[0];
+              if (document.getElementById(scriptId)) return;
 
-      document.addEventListener("DOMContentLoaded", function () {
-        (function (document, tagName, scriptId) {
-          const firstScript = document.getElementsByTagName(tagName)[0];
-          if (document.getElementById(scriptId)) return;
+              const scriptElement = document.createElement(script);
+              scriptElement.src = "https://itsdimitrie.github.io/table.one-widget-test/embed.js";
+              // scriptElement.src = "http://localhost:5173/table.one-widget-test/embed.js";
 
-          const widgetData = document.querySelector(".widget-data");
-          const restoId = widgetData?.getAttribute("restoId") || "default";
-          const color = widgetData?.getAttribute("color") || "default";
-
-          const scriptElement = document.createElement(tagName);
-          scriptElement.src = "https://itsdimitrie.github.io/table.one-widget-test/embed.js";
-
-          const widgetContainer = document.createElement("div");
-          widgetContainer.className = "reservation-widget";
-
-          widgetContainer.setAttribute("data-restaurant", restoId);
-          widgetContainer.setAttribute("data-color", color);
-
-          document.body.appendChild(widgetContainer);
-          firstScript.parentNode?.insertBefore(scriptElement, firstScript);
-        })(document, "script", "reservationWidgetScript");
-      });
-    </script>
-    
-    <div class="widget-data" restoId="Bistro Dimitrie" color="blue"></div>
+              firstScript.parentNode?.insertBefore(scriptElement, firstScript);
+            })(document, "script", "reservationWidgetScript");
+          });
+        </script>
+        
+        <div class="widget-data" restoId="Bistro Van Dimi" color="red"></div>
   </body>
 </html>
