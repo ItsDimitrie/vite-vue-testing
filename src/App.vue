@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col">
-    <!-- Header with pink background -->
+    <!-- Header with blue background -->
     <header class="bg-blue-600 text-white py-16 px-6 text-center">
       <h1 class="text-5xl font-bold mb-2">Table.One Widget</h1>
       <p class="text-xl">This widget is in test production.</p>
@@ -12,11 +12,39 @@
         <h2 class="text-4xl font-bold mb-8">Embed code</h2>
         
         <p class="mb-6 text-gray-300">Paste this code inside the <span class="text-white font-mono">&lt;body&gt;</span> tag of your website.</p>
-        <p class="text-grau-300">You can edit the 
+        
+        <!-- Editable fields -->
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-gray-300 mb-2" for="restoIdInput">Restaurant ID:</label>
+            <input 
+              id="restoIdInput" 
+              v-model="restoId" 
+              class="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+              placeholder="Enter restaurant ID"
+            />
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-2" for="colorSelect">Color:</label>
+            <select 
+              id="colorSelect" 
+              v-model="color" 
+              class="w-full bg-gray-800 border border-gray-700 rounded px-4 py-2 text-white"
+            >
+              <option value="blue">Blue</option>
+              <option value="green">Green</option>
+              <option value="red">Red</option>
+              <option value="orange">Orange</option>
+            </select>
+          </div>
+        </div>
+        
+        <p class="text-gray-300 mb-6">
+          You can edit the 
           <span class="text-white font-mono">&lt;restoId&gt;</span> and change the color to either blue, green, red or orange in
-        <span class="text-white font-mono">&lt;color&gt;</span>
-       </p>
-
+          <span class="text-white font-mono">&lt;color&gt;</span>
+        </p>
+        <p class="text-gray-300">Note that this only changes on your own application where you import the code, not on this page.</p>
         
         <div class="bg-gray-800 rounded-md overflow-hidden relative">
           <pre class="p-4 overflow-x-auto text-sm text-gray-300">
@@ -34,29 +62,32 @@
 <span class="text-gray-500">12.</span>        <span class="text-white">})(document, </span><span class="text-green-400">"script"</span><span class="text-white">, </span><span class="text-green-400">"reservationWidgetScript"</span><span class="text-white">);</span>
 <span class="text-gray-500">13.</span>    <span class="text-white">});</span>
 <span class="text-gray-500">14.</span> <span class="text-blue-400">&lt;/script&gt;</span>
-<span class="text-gray-500">15.</span> <span class="text-blue-400">&lt;div</span> class=<span class="text-green-400">"widget-data"</span> restoId=<span class="text-green-400">"Bistro Van Dimi"</span> color=<span class="text-green-400">"red"</span><span class="text-blue-400">&gt;&lt;/div&gt;</span></pre>
+<span class="text-gray-500">15.</span> <span class="text-blue-400">&lt;div</span> class=<span class="text-green-400">"widget-data"</span> restoId=<span class="text-green-400">"{{ restoId }}"</span> color=<span class="text-green-400">"{{ color }}"</span><span class="text-blue-400">&gt;&lt;/div&gt;</span></pre>
+        </div>
+        
+        <button 
+          @click="copyCode" 
+          class="flex ml-auto mr-auto mt-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-xl font-medium rounded"
+        >
+          {{ copyButtonText }}
+        </button>
       </div>
-                <button 
-            @click="copyCode" 
-            class="flex ml-auto mr-auto mt-20  bg-blue-600 hover:bg-blue-200 text-white p-20 py-10 text-xl font-medium rounded"
-          >
-            {{ copyButtonText }}
-          </button>
-      </div>
-      
     </main>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 
 export default defineComponent({
   name: 'App',
   setup() {
     const copyButtonText = ref('COPY');
+    const restoId = ref('Bistro Van Dimi');
+    const color = ref('red');
 
-    const codeSnippet = `<script>
+    const codeSnippet = computed(() => {
+      return `<script>
     document.addEventListener("DOMContentLoaded", function () {
         (function (document, script, scriptId) {
             const firstScript = document.getElementsByTagName(script)[0];
@@ -70,10 +101,11 @@ export default defineComponent({
         })(document, "script", "reservationWidgetScript");
     });
 <\/script>
-<div class="widget-data" restoId="Bistro Van Dimi" color="red"><\/div>`;
+<div class="widget-data" restoId="${restoId.value}" color="${color.value}"><\/div>`;
+    });
 
     const copyCode = () => {
-      navigator.clipboard.writeText(codeSnippet);
+      navigator.clipboard.writeText(codeSnippet.value);
       copyButtonText.value = 'COPIED!';
       setTimeout(() => {
         copyButtonText.value = 'COPY';
@@ -82,6 +114,8 @@ export default defineComponent({
 
     return {
       copyButtonText,
+      restoId,
+      color,
       copyCode
     };
   }
